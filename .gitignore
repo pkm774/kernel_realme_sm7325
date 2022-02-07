@@ -83,6 +83,12 @@ modules.order
 /tar-install/
 
 #
+# out directory (make O=out)
+#
+/out/
+/OUT/
+
+#
 # We don't want to ignore the following even if they are dot-files
 #
 !.clang-format
