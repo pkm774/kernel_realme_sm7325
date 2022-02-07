@@ -20,7 +20,7 @@
 */
 
 #ifdef OPLUS_FEATURE_SDCARD_INFO
-#include "../../../../../../kernel/msm-5.4/drivers/mmc/host/sdInfo/sdinfo.h"
+#include "../../../mmc/host/sdInfo/sdinfo.h"
 #endif
 
 #include <linux/blkdev.h>
