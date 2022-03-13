@@ -261,26 +261,26 @@ static void sia8159_chip_off(
 	mdelay(1);	// wait chip power off
 }
 
+#define REG_NUM (SIA8159_REG_TRIMMING_END - SIA8159_REG_TRIMMING_BEGIN + 1)
+
 static void sia8159_check_trimming(
 	struct regmap *regmap)
 {
-	static const uint32_t reg_num = 
-		SIA8159_REG_TRIMMING_END - SIA8159_REG_TRIMMING_BEGIN + 1;
-	static const char defaults[reg_num] = {0x76, 0x66, 0x70};
-	uint8_t vals[reg_num] = {0};
+	static const char defaults[REG_NUM] = {0x76, 0x66, 0x70};
+	uint8_t vals[REG_NUM] = {0};
 	uint8_t crc = 0;
 
 	/* wait reading trimming data to reg */
 	mdelay(1);
 
 	if (0 != sia81xx_regmap_read(regmap, 
-		SIA8159_REG_TRIMMING_BEGIN, reg_num, (char *)vals))
+		SIA8159_REG_TRIMMING_BEGIN, REG_NUM, (char *)vals))
 		return ;
 
-	crc = vals[reg_num - 1] & 0x0F;
-	vals[reg_num - 1] &= 0xF0;
+	crc = vals[REG_NUM - 1] & 0x0F;
+	vals[REG_NUM - 1] &= 0xF0;
 
-	if (crc != crc4_itu(vals, reg_num)) {
+	if (crc != crc4_itu(vals, REG_NUM)) {
 		pr_warn("[ warn][%s] %s: trimming failed !! \r\n", 
 			LOG_FLAG, __func__);
 
@@ -292,7 +292,7 @@ static void sia8159_check_trimming(
 			return;
 
 		sia81xx_regmap_write(regmap, 
-			SIA8159_REG_TRIMMING_BEGIN, reg_num, defaults);
+			SIA8159_REG_TRIMMING_BEGIN, REG_NUM, defaults);
 	}
 }
 
