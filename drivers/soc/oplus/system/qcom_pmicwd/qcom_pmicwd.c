@@ -38,6 +38,7 @@
 #define QPNP_PON_WD_RESET_PET_MASK		BIT(0)
 
 #define PMIC_WD_DEFAULT_TIMEOUT 254
+#define PMIC_WD_DEFAULT_ENABLE 0  /*wen.luo@BSP.Kernel.Stability, 2019-8-15 add for enable pmic, enable in criticallog_config.xml*/
 
 #define  OPLUS_KE_PROC_ENTRY(name, entry, mode)\
 	({if (!proc_create(#name, S_IFREG | mode, oplus_ke_proc_dir, \

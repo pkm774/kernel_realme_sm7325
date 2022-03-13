@@ -196,6 +196,7 @@ enum usb_property_id {
 	USB_VOOCPHY_RESET_AGAIN,
 	USB_SUSPEND_PMIC,
 	USB_CCDETECT_HAPPENED,
+	USB_OEM_MISC_CTL,/*yangmingjin@BSP.CHG.Basic. 2021/02/08, add for lcd  voltage ripple issue*/
 #endif /*OPLUS_FEATURE_CHG_BASIC*/
 	USB_TEMP,
 	USB_REAL_TYPE,
