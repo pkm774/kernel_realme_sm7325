@@ -69,8 +69,9 @@ static int def_swich=1;
 static char *flow_buf=NULL;
 static char *flow_buf_curr=NULL;
 static const int flow_size=16;
-static const int stage_brief_size=64;
-static const int stage_total_size=stage_brief_size*flow_size;
+
+#define STAGE_BRIEF_SIZE 64
+#define STAGE_TOTAL_SIZE 1024
 
 static int flow_index=0;
 static int stage_start=0;
@@ -219,10 +220,10 @@ static ssize_t black_screen_check_proc_write(struct file *file, const char __use
 static void record_stage(const char *buf)
 {
 
-    memset(flow_buf_curr, 0, stage_brief_size);
-    memcpy(flow_buf_curr, buf, stage_brief_size - 1);
-    *(flow_buf_curr + stage_brief_size - 1)='\n';
-    flow_buf_curr+=stage_brief_size;
+    memset(flow_buf_curr, 0, STAGE_BRIEF_SIZE);
+    memcpy(flow_buf_curr, buf, STAGE_BRIEF_SIZE - 1);
+    *(flow_buf_curr + STAGE_BRIEF_SIZE - 1)='\n';
+    flow_buf_curr+=STAGE_BRIEF_SIZE;
 
     //w lock index
     flow_index++;
@@ -232,7 +233,7 @@ static void record_stage(const char *buf)
     }
     //w lock index
 
-    //flow_buf_curr+=stage_brief_size;
+    //flow_buf_curr+=STAGE_BRIEF_SIZE;
 
 }
 
@@ -240,15 +241,15 @@ static ssize_t black_screen_report_proc_write(struct file *file, const char __us
 		size_t count,loff_t *off)
 {
 
-    char buffer[stage_brief_size] = {0};
+    char buffer[STAGE_BRIEF_SIZE] = {0};
 
 	if(g_black_data.status == BLACK_STATUS_INIT || g_black_data.status == BLACK_STATUS_INIT_FAIL){
 		BLACK_DEBUG_PRINTK("%s init not finish: status = %d\n", __func__, g_black_data.status);
 		return count;
 	}
 
-    if (count > stage_brief_size) {
-       count = stage_brief_size;
+    if (count > STAGE_BRIEF_SIZE) {
+       count = STAGE_BRIEF_SIZE;
     }
 
     if (copy_from_user(buffer, buf, count)) {
@@ -268,14 +269,14 @@ static ssize_t rick_pick_fail_stage(struct file *file, char __user *buf,
     int start,end;
     char *t_sbuf= NULL;
     char *buf_curr = NULL;
-    char sbuf[stage_total_size] = {0};
+    char sbuf[STAGE_TOTAL_SIZE] = {0};
 
     if(stage_start == stage_end)
     {
         return 0;
     }
 
-    buf_curr = stage_start*stage_brief_size + flow_buf;
+    buf_curr = stage_start*STAGE_BRIEF_SIZE + flow_buf;
     start = stage_start;
     end = stage_end+1;
     if(end == flow_size)
@@ -288,11 +289,11 @@ static ssize_t rick_pick_fail_stage(struct file *file, char __user *buf,
     t_sbuf= sbuf;
     for(;start!= end;)
     {
-        memset(t_sbuf,0,stage_brief_size);
-        memcpy(t_sbuf,buf_curr,stage_brief_size);
+        memset(t_sbuf,0,STAGE_BRIEF_SIZE);
+        memcpy(t_sbuf,buf_curr,STAGE_BRIEF_SIZE);
 
-        buf_curr+=stage_brief_size;
-        t_sbuf+=stage_brief_size;
+        buf_curr+=STAGE_BRIEF_SIZE;
+        t_sbuf+=STAGE_BRIEF_SIZE;
 
         //w lock index
         start++;
@@ -304,7 +305,7 @@ static ssize_t rick_pick_fail_stage(struct file *file, char __user *buf,
     }
 
     return simple_read_from_buffer(buf, count, off, sbuf,
-               stage_brief_size*flow_size);
+               STAGE_BRIEF_SIZE*flow_size);
 
 }
 static void print_all_flow(void)
@@ -317,7 +318,7 @@ static void print_all_flow(void)
     for(;start < flow_size;start++)
     {
          BLACK_DEBUG_PRINTK("%s  \n", t_sbuf);
-        t_sbuf+=stage_brief_size;
+        t_sbuf+=STAGE_BRIEF_SIZE;
     }
     BLACK_DEBUG_PRINTK("exit print_all \n");
 }
@@ -833,10 +834,10 @@ static int __init black_screen_check_init(void)
 			msecs_to_jiffies(BLACK_INIT_STATUS_TIMEOUT_MS));
 	g_black_data.status = get_status();
 
-    flow_buf= vmalloc(stage_brief_size*flow_size);
+    flow_buf= vmalloc(STAGE_BRIEF_SIZE*flow_size);
     if (!flow_buf)
         return -ENOMEM;
-    memset(flow_buf,0,stage_brief_size*flow_size);
+    memset(flow_buf,0,STAGE_BRIEF_SIZE*flow_size);
     flow_buf_curr = flow_buf;
 
 	return 0;
