@@ -1,9 +1,12 @@
 # set toolchains directory
 TOP=$(realpath ../)
 
+# Set Architecture and Config
+KERNEL_ARCH=arm64
+ARCH=${KERNEL_ARCH}
+DEFCONFIG=lahaina_defconfig
+
 # export aosp gcc toolchains path
-
-
 PATH="$TOP/tools/build-tools/linux-x86/bin:$PATH"
 PATH="$TOP/tools/build-tools/path/linux-x86:$PATH"
 PATH="$TOP/tools/gas/linux-x86:$PATH"
@@ -18,14 +21,12 @@ export DTC_EXT="$TOP/tools/misc/linux-x86/dtc/dtc"
 export DTC_OVERLAY_TEST_EXT="$TOP/tools/misc/linux-x86/libufdt/ufdt_apply_overlay"
 MAKE_PATH=${TOP}/tools/build-tools/linux-x86/bin/
 
-KERNEL_ARCH=arm64
-ARCH=${KERNEL_ARCH}
-DEFCONFIG=lahaina_defconfig
-
+# Cross Compile Flags
 CLANG_TRIPLE=aarch64-linux-gnu-
 CROSS_COMPILE=aarch64-linux-android-
 CROSS_COMPILE_COMPAT=arm-linux-androideabi-
 
+# Set tools path
 TARGET_KERNEL_MAKE_ENV+="HOSTCC=${TOP}/tools/clang/host/linux-x86/clang-r428724/bin/clang "
 TARGET_KERNEL_MAKE_ENV+="HOSTCXX=${TOP}/tools/clang/host/linux-x86/clang-r428724/bin/clang++ "
 TARGET_KERNEL_MAKE_ENV+="HOSTLD=${TOP}/tools/clang/host/linux-x86/clang-r428724/bin/ld.lld "
@@ -40,6 +41,7 @@ TARGET_KERNEL_MAKE_ENV+="OBJSIZE=${TOP}/tools/clang/host/linux-x86/clang-r428724
 TARGET_KERNEL_MAKE_ENV+="READELF=${TOP}/tools/clang/host/linux-x86/clang-r428724/bin/llvm-readelf "
 TARGET_KERNEL_MAKE_ENV+="STRIP=${TOP}/tools/clang/host/linux-x86/clang-r428724/bin/llvm-strip "
 
+# make instructions
 ${MAKE_PATH}make O=out ${TARGET_KERNEL_MAKE_ENV} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CROSS_COMPILE_COMPAT=${CROSS_COMPILE_COMPAT} CLANG_TRIPLE=${CLANG_TRIPLE} ${DEFCONFIG}
 
 ${MAKE_PATH}make O=out ${TARGET_KERNEL_MAKE_ENV} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CROSS_COMPILE_COMPAT=${CROSS_COMPILE_COMPAT} CLANG_TRIPLE=${CLANG_TRIPLE} -j$(nproc)
